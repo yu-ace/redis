@@ -18,9 +18,6 @@ import java.util.*;
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     private static final Map<String, List<Integer>> map = new HashMap<>();
-    // 建两个文件，一个byteBuffer专门存放数据，另一个存放索引，当需要替换某一个数值时，字节写入一个新的值，然后更新一下索引，旧的值不需要管，没有指针指引就可以了；
-    // 索引主要记录key，position和length
-    // 先用hashmap，之后再自己实现一个hash函数爱处理；
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         //获取客户端发送过来的消息
