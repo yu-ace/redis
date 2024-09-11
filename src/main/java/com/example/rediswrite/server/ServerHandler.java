@@ -7,81 +7,67 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.RandomAccessFile;
+
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
+
 import java.util.*;
 
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Map<String, List<Integer>> map = new HashMap<>();
+    Map<String, List<Integer>> map = new HashMap<>();
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         //获取客户端发送过来的消息
         ByteBuf byteBuf = (ByteBuf) msg;
         String message = byteBuf.toString(CharsetUtil.UTF_8);
         String[] split = message.split("\n\t");
+        ByteBuffer buffer = ByteBuffer.allocate(8*1024*1024);
+        int size;
+        int startPosition = 8*1024*1024;
         for(int i = 0;i < split.length;i++){
             String[] strings = split[i].split(" ");
             String command = strings[0];
             String response;
 
-
             switch(command){
                 case "set":
-                    //获取文件
-                    RandomAccessFile write = new RandomAccessFile(
-                            "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.bin","rw");
-                    FileChannel channel = write.getChannel();
-                    ByteBuffer buffer = ByteBuffer.allocate((int) channel.size());
-                    channel.read(buffer);
-                    buffer.flip();
-
-                    byte[] keyByte = strings[1].getBytes();
                     byte[] valueByte = strings[2].getBytes();
-                    ByteBuffer newBuffer = ByteBuffer.allocate(
-                            buffer.remaining() + valueByte.length);
+                    int valurLength = valueByte.length;
+                    buffer.position(0);
+                    size = buffer.getInt();
+                    int newSize = size + 1;
+                    buffer.position(0);
+                    buffer.putInt(newSize);
+                    int position = 4 + 8 * size;
+                    buffer.position(position);
+                    startPosition = startPosition - valurLength;
+                    buffer.putInt(startPosition);
+                    buffer.putInt(valurLength);
+                    buffer.position(startPosition);
+                    buffer.put(valueByte);
 
-                    int startPosition = buffer.limit();
-                    int endPosition = startPosition + valueByte.length;
-                    newBuffer.put(valueByte).flip();
-                    channel.write(newBuffer);
-
-                    ArrayList<Integer> arrayList = new ArrayList<>();
-                    arrayList.add(startPosition);
-                    arrayList.add(endPosition);
-                    map.put(strings[1],arrayList);
+                    ArrayList<Integer> list = new ArrayList<>();
+                    list.add(startPosition);
+                    list.add(valurLength);
+                    map.put(strings[1],list);
                     response = "ok";
-
-                    write.close();
                     break;
 
                 case "get":
-                    RandomAccessFile read = new RandomAccessFile(
-                            "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.bin","rw");
-                    FileChannel readChannel = read.getChannel();
-                    long length = read.length();
-                    ByteBuffer byteBuffer = ByteBuffer.allocate((int) length);
-                    readChannel.read(byteBuffer);
-                    byteBuffer.flip();
-
                     if(map.containsKey(strings[1])){
                         List<Integer> getPositionList = map.get(strings[1]);
-                        byteBuffer.position(getPositionList.get(0));
-                        byteBuffer.limit(getPositionList.get(1));
+                        buffer.position(getPositionList.get(0));
+                        buffer.limit(getPositionList.get(0) + getPositionList.get(1));
 
-                        ByteBuffer slice = byteBuffer.slice();
+                        ByteBuffer slice = buffer.slice();
                         byte[] bytes = new byte[slice.remaining()];
                         slice.get(bytes);
 
-                        response = new String(bytes, StandardCharsets.UTF_8);
+                        response = new String(bytes,CharsetUtil.UTF_8);
                     }else {
                         response = "null";
                     }
-                    read.close();
+
                     break;
                 default:
                     response = "wrong";
