@@ -61,9 +61,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         String response;
         if(!map.containsKey(key)){
             response = "key is null";
+        }else {
+            map.remove(key);
+            response = "delete ok";
         }
-
-        response = "delete ok";
         return response;
     }
 
