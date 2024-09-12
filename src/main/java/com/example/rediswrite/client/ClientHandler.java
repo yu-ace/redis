@@ -15,8 +15,11 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
         ctx.writeAndFlush(Unpooled.copiedBuffer("set b am"+"\n\t", CharsetUtil.UTF_8));
         ctx.writeAndFlush(Unpooled.copiedBuffer("set c sad"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("set d qweqw"+"\n\t", CharsetUtil.UTF_8));
         ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
         ctx.writeAndFlush(Unpooled.copiedBuffer("get b"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("list"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("stat"+"\n\t", CharsetUtil.UTF_8));
     }
 
     @Override

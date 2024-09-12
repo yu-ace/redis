@@ -28,7 +28,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         //获取客户端发送过来的消息
         String[] split = getStrings((ByteBuf) msg);
-
         for(int i = 0;i < split.length;i++){
             String[] strings = split[i].split(" ");
             String command = strings[0];
@@ -37,14 +36,19 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             switch(command){
                 case "set":
                     set(strings);
-                    response = "ok";
+                    response = "set ok";
                     break;
                 case "get":
                     response = get(strings[1]);
                     break;
                 case "list":
-
-                    response = null;
+                    response = "key一共有"+list()+"个";
+                    break;
+                case "stat":
+                    response = "value一共有"+stat()+"个";
+                    break;
+                case "delete":
+                    response = delete(strings[1]);
                     break;
                 default:
                     response = "wrong";
@@ -53,14 +57,44 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
+    private String delete(String key){
+        String response;
+        if(!map.containsKey(key)){
+            response = "key is null";
+        }
+
+        response = "delete ok";
+        return response;
+    }
+
+    private Integer stat(){
+        int size = 0;
+        Set<String> strings = map.keySet();
+        for(String s:strings){
+            String value = get(s);
+            System.out.println("value:"+value);
+            size++;
+        }
+        return size;
+    }
+
+    private Integer list() {
+        Set<String> strings = map.keySet();
+        for(String s:strings){
+            System.out.println("key:"+s);
+        }
+        return strings.size();
+    }
+
     private static String[] getStrings(ByteBuf msg) {
         String message = msg.toString(CharsetUtil.UTF_8);
         return message.split("\n\t");
     }
 
     private String get(String key) {
-        String response;
+        String value;
         if(map.containsKey(key)){
+            buffer.limit(1024*1024*1024);
             Record record = map.get(key);
             buffer.position(record.getPosition());
             buffer.limit(record.getPosition() + record.getLength());
@@ -68,11 +102,11 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             byte[] bytes = new byte[slice.remaining()];
             slice.get(bytes);
 
-            response = new String(bytes,CharsetUtil.UTF_8);
+            value = new String(bytes, CharsetUtil.UTF_8);
         }else {
-            response = "null";
+            value = "null";
         }
-        return response;
+        return value;
     }
 
     private void set(String[] strings) {
