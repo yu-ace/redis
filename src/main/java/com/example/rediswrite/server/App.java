@@ -8,9 +8,20 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-public class Server {
-    public static void main(String[] args) throws Exception {
+@Component
+public class App {
+
+    @Value("${Netty.server.inetHost:127.0.0.1}")
+    private String inetHost;
+
+    @Value("${Netty.server.inetPort:6666}")
+    private Integer inetPort;
+
+    public void connection() throws Exception{
         //创建两个线程组 boosGroup、workerGroup
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -35,7 +46,7 @@ public class Server {
                     });//给workerGroup的EventLoop对应的管道设置处理器
             //System.out.println("java技术爱好者的服务端已经准备就绪...");
             //绑定端口号，启动服务端
-            ChannelFuture channelFuture = bootstrap.bind(6666).sync();
+            ChannelFuture channelFuture = bootstrap.bind(inetHost,inetPort).sync();
             //对关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
         } finally {

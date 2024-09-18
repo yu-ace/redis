@@ -1,11 +1,9 @@
 package com.example.rediswrite.server;
 
-import com.example.rediswrite.dao.RecordDao;
-
 import java.util.Set;
 
 public class RecordServer {
-    private final RecordDao recordDao = RecordDao.getInstance();
+    private final Memory recordDao = Memory.getInstance();
     private static final RecordServer recordServer = new RecordServer();
     private RecordServer(){
     }
