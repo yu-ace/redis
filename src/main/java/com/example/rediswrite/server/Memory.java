@@ -1,5 +1,6 @@
 package com.example.rediswrite.server;
 
+import com.example.rediswrite.model.Command;
 import com.example.rediswrite.model.Record;
 import io.netty.util.CharsetUtil;
 
@@ -9,12 +10,14 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class Memory {
     Map<String, Record> map = new HashMap<>();
-    ByteBuffer buffer;
+
+    ByteBuffer buffer = ByteBuffer.allocate(1024*1024*1024);
 
     private static final Memory recordDao = new Memory();
     private Memory(){
@@ -23,28 +26,28 @@ public class Memory {
         return recordDao;
     }
 
-    public ByteBuffer init() throws Exception {
-        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.bin";
-        File file = new File(path);
-        ByteBuffer byteBuffer;
-        if(file.exists()){
-            RandomAccessFile read = new RandomAccessFile(path, "rw");
-            long length = read.length();
-            byteBuffer = ByteBuffer.allocate((int) length);
-        }else{
-            byteBuffer = ByteBuffer.allocate(1024*1024*1024);
-        }
-        return byteBuffer;
-    }
-
-    public void shutDown(ByteBuffer buffer) throws Exception{
-        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.bin";
-        RandomAccessFile file = new RandomAccessFile(path,"rw");
-        FileChannel channel = file.getChannel();
-        buffer.flip();
-        channel.write(buffer);
-        file.close();
-    }
+//    public ByteBuffer init() throws Exception {
+//        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.bin";
+//        File file = new File(path);
+//        ByteBuffer byteBuffer;
+//        if(file.exists()){
+//            RandomAccessFile read = new RandomAccessFile(path, "rw");
+//            long length = read.length();
+//            byteBuffer = ByteBuffer.allocate((int) length);
+//        }else{
+//            byteBuffer = ByteBuffer.allocate(1024*1024*1024);
+//        }
+//        return byteBuffer;
+//    }
+//
+//    public void shutDown(ByteBuffer buffer) throws Exception{
+//        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.bin";
+//        RandomAccessFile file = new RandomAccessFile(path,"rw");
+//        FileChannel channel = file.getChannel();
+//        buffer.flip();
+//        channel.write(buffer);
+//        file.close();
+//    }
 
     public String get(String key) {
         String value;
@@ -64,8 +67,8 @@ public class Memory {
         return value;
     }
 
-    public void set(String[] strings) {
-        byte[] valueByte = strings[2].getBytes();
+    public void set(String key,Object value) {
+        byte[] valueByte = ((String) value).getBytes();
         int valurLength = valueByte.length;
         buffer.position(0);
         int size = buffer.getInt();
@@ -87,7 +90,7 @@ public class Memory {
         buffer.put(valueByte);
 
         Record record = new Record(startPosition, valurLength);
-        map.put(strings[1],record);
+        map.put(key,record);
     }
 
     public Set<String> keyList(){

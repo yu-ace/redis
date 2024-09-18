@@ -1,5 +1,6 @@
 package com.example.rediswrite.server;
 
+import com.example.rediswrite.model.Command;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,37 +13,15 @@ import io.netty.util.CharsetUtil;
 //4. 应用启动时读取配置文件，将磁盘上的数据载入到内存中，磁盘没有数据就初始化
 //5. 定时重建内存，移除已经删除的数据。定时配置保存到配置文件中
 public class ServerHandler extends ChannelInboundHandlerAdapter {
-    private final RecordServer recordServer = RecordServer.getInstance();
+    private final CommandServer recordServer = CommandServer.getInstance();
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         //获取客户端发送过来的消息
         String[] split = getStrings((ByteBuf) msg);
         for(int i = 0;i < split.length;i++){
             String[] strings = split[i].split(" ");
-            String command = strings[0];
-            String response;
-
-            switch(command){
-                case "set":
-                    recordServer.setKey(strings);
-                    response = "set ok";
-                    break;
-                case "get":
-                    response = recordServer.getValue(strings[1]);
-                    break;
-                case "list":
-                    response = "key一共有"+recordServer.list()+"个";
-                    break;
-                case "stat":
-                    response = "value一共有"+recordServer.stat()+"个";
-                    break;
-                case "delete":
-                    response = recordServer.deleteKey(strings[1]);
-                    break;
-                default:
-                    response = "wrong";
-            }
-            System.out.println("收到客户端" + ctx.channel().remoteAddress() + "发送的消息：" + response);
+            Command command = new Command(strings[0], strings[1], strings[2]);
+            System.out.println("收到客户端" + ctx.channel().remoteAddress() + "发送的消息");
         }
     }
 
