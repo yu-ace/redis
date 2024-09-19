@@ -1,6 +1,8 @@
 package com.example.rediswrite.model;
 
-public class Record {
+import java.io.Serializable;
+
+public class Record implements Serializable {
     Integer position;
     Integer length;
 

@@ -17,7 +17,8 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     private static final Memory memory = Memory.getInstance();
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
+        memory.initMap();
+        memory.init();
         String result;
         //获取客户端发送过来的消息
         String message = ((ByteBuf) msg).toString(CharsetUtil.UTF_8);
@@ -32,6 +33,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             System.out.println("收到客户端" + ctx.channel().remoteAddress() + "发送的消息" + result);
         }
         memory.shutDown();
+        memory.saveMap();
     }
 
     @Override

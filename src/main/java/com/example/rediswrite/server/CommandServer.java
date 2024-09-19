@@ -10,6 +10,7 @@ import java.util.function.Function;
 public class CommandServer {
     private static final CommandServer commandServer = new CommandServer();
     private CommandServer(){
+        initializeCommands();
     }
     public static CommandServer getInstance(){
         return commandServer;
@@ -28,7 +29,6 @@ public class CommandServer {
 
     public String executeCommand(Command command) {
         String result;
-        initializeCommands();
         Function<Command, String> action = commandMap.get(command.getName());
         if (action != null) {
             result = action.apply(command);

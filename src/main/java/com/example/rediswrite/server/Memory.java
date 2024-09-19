@@ -3,18 +3,18 @@ package com.example.rediswrite.server;
 import com.example.rediswrite.model.Record;
 import io.netty.util.CharsetUtil;
 
-import java.io.File;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class Memory {
-    Map<String, Record> map = new HashMap<>();
-
-    ByteBuffer buffer = ByteBuffer.allocate(1024*1024);
+    Map<String, Record> map;
+    ByteBuffer buffer;
 
     private static final Memory recordDao = new Memory();
     private Memory(){
@@ -23,23 +23,46 @@ public class Memory {
         return recordDao;
     }
 
-//    public void init() throws Exception {
-//        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.bin";
-//        File file = new File(path);
-//        if(file.exists()){
-//            RandomAccessFile read = new RandomAccessFile(path, "rw");
-//            long length = read.length();
-//            buffer = ByteBuffer.allocate((int) length);
-//        }else{
-//            buffer = ByteBuffer.allocate(1024*1024*1024);
-//        }
-//    }
+    public void init() throws Exception {
+        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.bin";
+        File file = new File(path);
+        if(file.exists()){
+            try(RandomAccessFile read = new RandomAccessFile(path, "rw")) {
+                long length = read.length();
+                buffer = ByteBuffer.allocate((int) length);
+                FileChannel channel = read.getChannel();
+                channel.read(buffer);
+                buffer.flip();
+            }
+        }else{
+            buffer = ByteBuffer.allocate(1024*1024);
+        }
+    }
+
+    public void initMap() throws Exception {
+        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\map.bin";
+        File file = new File(path);
+        map = new HashMap<>();
+        if(file.exists()){
+            FileInputStream fileInputStream = new FileInputStream(path);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            map = (Map<String,Record>) objectInputStream.readObject();
+        }
+    }
+
+    public void saveMap() throws Exception {
+        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\map.bin";
+        FileOutputStream fileOutputStream = new FileOutputStream(path);
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        objectOutputStream.writeObject(map);
+    }
 
     public void shutDown() throws Exception{
-        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.txt";
+        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.bin";
         RandomAccessFile file = new RandomAccessFile(path,"rw");
         FileChannel channel = file.getChannel();
         buffer.flip();
+        buffer.limit(buffer.capacity());
         channel.write(buffer);
         file.close();
     }
@@ -47,7 +70,7 @@ public class Memory {
     public String get(String key) {
         String value;
         if(map.containsKey(key)){
-            buffer.limit(1024*1024*1024);
+            buffer.limit(1024*1024);
             Record record = map.get(key);
             buffer.position(record.getPosition());
             buffer.limit(record.getPosition() + record.getLength());
@@ -63,7 +86,7 @@ public class Memory {
     }
 
     public void set(String key,Object value) {
-        byte[] valueByte = ((String) value).getBytes();
+        byte[] valueByte = ((String) value).getBytes(StandardCharsets.UTF_8);
         int valurLength = valueByte.length;
         buffer.position(0);
         int size = buffer.getInt();
@@ -72,7 +95,7 @@ public class Memory {
         int position = 4 + 8 * size;
         int startPosition;
         if(size == 0){
-            startPosition = 1024*1024*1024 - valurLength;
+            startPosition = 1024*1024 - valurLength;
         }else {
             buffer.position(position - 8);
             int lastPosition = buffer.getInt();
