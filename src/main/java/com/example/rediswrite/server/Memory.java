@@ -1,23 +1,20 @@
 package com.example.rediswrite.server;
 
-import com.example.rediswrite.model.Command;
 import com.example.rediswrite.model.Record;
 import io.netty.util.CharsetUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class Memory {
     Map<String, Record> map = new HashMap<>();
 
-    ByteBuffer buffer = ByteBuffer.allocate(1024*1024*1024);
+    ByteBuffer buffer = ByteBuffer.allocate(1024*1024);
 
     private static final Memory recordDao = new Memory();
     private Memory(){
@@ -26,28 +23,26 @@ public class Memory {
         return recordDao;
     }
 
-//    public ByteBuffer init() throws Exception {
+//    public void init() throws Exception {
 //        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.bin";
 //        File file = new File(path);
-//        ByteBuffer byteBuffer;
 //        if(file.exists()){
 //            RandomAccessFile read = new RandomAccessFile(path, "rw");
 //            long length = read.length();
-//            byteBuffer = ByteBuffer.allocate((int) length);
+//            buffer = ByteBuffer.allocate((int) length);
 //        }else{
-//            byteBuffer = ByteBuffer.allocate(1024*1024*1024);
+//            buffer = ByteBuffer.allocate(1024*1024*1024);
 //        }
-//        return byteBuffer;
 //    }
-//
-//    public void shutDown(ByteBuffer buffer) throws Exception{
-//        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.bin";
-//        RandomAccessFile file = new RandomAccessFile(path,"rw");
-//        FileChannel channel = file.getChannel();
-//        buffer.flip();
-//        channel.write(buffer);
-//        file.close();
-//    }
+
+    public void shutDown() throws Exception{
+        String path = "C:\\Users\\cfcz4\\OneDrive\\Desktop\\data.txt";
+        RandomAccessFile file = new RandomAccessFile(path,"rw");
+        FileChannel channel = file.getChannel();
+        buffer.flip();
+        channel.write(buffer);
+        file.close();
+    }
 
     public String get(String key) {
         String value;

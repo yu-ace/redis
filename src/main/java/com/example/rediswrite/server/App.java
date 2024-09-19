@@ -8,7 +8,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +19,8 @@ public class App {
 
     @Value("${Netty.server.inetPort:6666}")
     private Integer inetPort;
+
+    private static final Memory memory = Memory.getInstance();
 
     public static void main(String[] args) throws Exception {
         connection();
@@ -57,26 +58,5 @@ public class App {
             workerGroup.shutdownGracefully();
         }
     }
-
-//        switch(command){
-//            case "set":
-//                recordServer.setKey(strings[1],strings[2]);
-//                response = "set ok";
-//                break;
-//            case "get":
-//                response = recordServer.getValue(strings[1]);
-//                break;
-//            case "list":
-//                response = "key一共有"+recordServer.list()+"个";
-//                break;
-//            case "stat":
-//                response = "value一共有"+recordServer.stat()+"个";
-//                break;
-//            case "delete":
-//                response = recordServer.deleteKey(strings[1]);
-//                break;
-//            default:
-//                response = "wrong";
-//        }
 
 }
