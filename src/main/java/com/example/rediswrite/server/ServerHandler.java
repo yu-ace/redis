@@ -19,21 +19,33 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         memory.initMap();
         memory.init();
-        String result;
+        ProcessMessage(ctx,(ByteBuf) msg);
+        memory.shutDown();
+        memory.saveMap();
+    }
+
+    private void ProcessMessage(ChannelHandlerContext ctx,ByteBuf msg) {
+        String result = null;
         //获取客户端发送过来的消息
-        String message = ((ByteBuf) msg).toString(CharsetUtil.UTF_8);
+        String message = msg.toString(CharsetUtil.UTF_8);
         String[] split = message.split("\n\t");
         for(int i = 0;i < split.length;i++){
             String[] strings = split[i].split(" ");
             String name = strings.length > 0 ? strings[0] : null;
             String key = strings.length > 1 ? strings[1] : null;
             String value = strings.length > 2 ? strings[2] : null;
-            Command command = new Command(name,key,value);
+            Object newValue = null;
+            if(value != null){
+                try{
+                    newValue = Integer.parseInt(value);
+                }catch (Exception e){
+                    newValue = value;
+                }
+            }
+            Command command = new Command(name,key,newValue);
             result = commandServer.executeCommand(command);
             System.out.println("收到客户端" + ctx.channel().remoteAddress() + "发送的消息" + result);
         }
-        memory.shutDown();
-        memory.saveMap();
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.example.rediswrite.model.Command;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -22,6 +23,8 @@ public class CommandServer {
     public void initializeCommands() {
         commandMap.put("set", this::setKey);
         commandMap.put("get", this::getValue);
+        commandMap.put("setNX", this::setNX);
+        commandMap.put("exists",this::exists);
         commandMap.put("stat", command -> stat());
         commandMap.put("delete", this::deleteKey);
         commandMap.put("list", command -> list());
@@ -36,6 +39,23 @@ public class CommandServer {
             result = "Unknown command: " + command.getName();
         }
         return result;
+    }
+
+    public String exists(Command command){
+        String s = memory.get(command.getKey());
+        if(!(s == null)){
+            return "key 存在";
+        }
+        return "key 不存在";
+    }
+    public String setNX(Command command){
+        String s = memory.get(command.getKey());
+        if(!(Objects.equals(s, " ")) && !(Objects.equals(s, "null"))){
+            return "key 存在";
+        }
+        memory.set(command.getKey(), command.getValue());
+        return "key 添加成功";
+
     }
 
     public String setKey(Command command){

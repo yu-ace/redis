@@ -86,7 +86,12 @@ public class Memory {
     }
 
     public void set(String key,Object value) {
-        byte[] valueByte = ((String) value).getBytes(StandardCharsets.UTF_8);
+        byte[] valueByte;
+        if(value instanceof String){
+            valueByte = ((String) value).getBytes(StandardCharsets.UTF_8);
+        }else {
+            valueByte = ByteBuffer.allocate(4).putInt((Integer) value).array();
+        }
         int valurLength = valueByte.length;
         buffer.position(0);
         int size = buffer.getInt();

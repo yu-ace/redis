@@ -17,16 +17,18 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 //        ctx.writeAndFlush(Unpooled.copiedBuffer("delete d"+"\n\t", CharsetUtil.UTF_8));
 //        ctx.writeAndFlush(Unpooled.copiedBuffer("set c sad"+"\n\t", CharsetUtil.UTF_8));
 //        ctx.writeAndFlush(Unpooled.copiedBuffer("set d qweqw"+"\n\t", CharsetUtil.UTF_8));
-        ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
-        ctx.writeAndFlush(Unpooled.copiedBuffer("get b"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("list"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("stat"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("delete d"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("list"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("stat"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("set g sdfsdf"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("list"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("stat"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get b"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get g"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("set a 1"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("set h 2"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("get a"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("get h"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("exists a"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("setNX a 2"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("setNX k 1"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("get a"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("get k"+"\n\t", CharsetUtil.UTF_8));
     }
 
     @Override
