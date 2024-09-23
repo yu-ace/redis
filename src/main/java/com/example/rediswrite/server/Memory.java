@@ -7,15 +7,13 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Memory {
     Map<String, Record> map;
     ByteBuffer buffer;
-
+    private static final Integer TYPE_INTEGER = 0;
+    private static final Integer TYPE_STRING = 1;
     private static final Memory recordDao = new Memory();
     private Memory(){
     }
@@ -79,13 +77,32 @@ public class Memory {
                 byte[] bytes = new byte[slice.remaining()];
                 slice.get(bytes);
                 value = new String(bytes, CharsetUtil.UTF_8);
-            }else {
+            }else if("Integer".equals(map.get(key).getType())){
                 value = buffer.getInt();
+            }else {
+                value = getList();
             }
         }else {
             value = "null";
         }
         return value;
+    }
+
+    private List<Object> getList() {
+        int size = buffer.getInt();
+        List<Object> list = new ArrayList<>();
+        for(int i = 0;i < size;i++){
+            int type = buffer.getInt();
+            if(type == TYPE_STRING){
+                int length = buffer.getInt();
+                byte[] bytes = new byte[length];
+                buffer.get(bytes);
+                list.add(new String(bytes,CharsetUtil.UTF_8));
+            }else {
+                list.add(buffer.getInt());
+            }
+        }
+        return list;
     }
 
     public void set(String key,Object value) {
@@ -94,10 +111,18 @@ public class Memory {
         if(value instanceof String){
             valueByte = ((String) value).getBytes(StandardCharsets.UTF_8);
             type = "String";
-        }else {
+        }else if(value instanceof Integer){
             valueByte = ByteBuffer.allocate(4).putInt((Integer) value).array();
             type = "Integer";
+        }else{
+            valueByte = processList((List<?>) value);
+            type = "List";
         }
+        Record record = getRecord(valueByte, type);
+        map.put(key,record);
+    }
+
+    private Record getRecord(byte[] valueByte, String type) {
         int valurLength = valueByte.length;
         buffer.position(0);
         int size = buffer.getInt();
@@ -118,8 +143,31 @@ public class Memory {
         buffer.position(startPosition);
         buffer.put(valueByte);
 
-        Record record = new Record(startPosition, valurLength,type);
-        map.put(key,record);
+        return new Record(startPosition, valurLength, type);
+    }
+
+    private byte[] processList(List<?> value) {
+        try{
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+            dataOutputStream.writeInt(value.size());
+            for(Object v:value){
+                if(v instanceof String){
+                    byte[] bytes = ((String) v).getBytes(StandardCharsets.UTF_8);
+                    dataOutputStream.writeInt(TYPE_STRING);
+                    dataOutputStream.writeInt(bytes.length);
+                    dataOutputStream.write(bytes);
+                }else {
+                    dataOutputStream.writeInt(TYPE_INTEGER);
+                    dataOutputStream.writeInt(4);
+                    dataOutputStream.write((Integer) v);
+                }
+            }
+            return byteArrayOutputStream.toByteArray();
+        }catch (Exception e){
+            e.getStackTrace();
+        }
+        return null;
     }
 
     public Object incr(String key){
