@@ -18,7 +18,7 @@ public class CommandServer {
     }
 
 
-    private final Map<String, Function<Command, String>> commandMap = new HashMap<>();
+    private final Map<String, Function<Command, Object>> commandMap = new HashMap<>();
     private final Memory memory = Memory.getInstance();
     public void initializeCommands() {
         commandMap.put("set", this::setKey);
@@ -28,11 +28,13 @@ public class CommandServer {
         commandMap.put("stat", command -> stat());
         commandMap.put("delete", this::deleteKey);
         commandMap.put("list", command -> list());
+        commandMap.put("decr",this::decr);
+        commandMap.put("incr",this::incr);
     }
 
-    public String executeCommand(Command command) {
-        String result;
-        Function<Command, String> action = commandMap.get(command.getName());
+    public Object executeCommand(Command command) {
+        Object result;
+        Function<Command, Object> action = commandMap.get(command.getName());
         if (action != null) {
             result = action.apply(command);
         } else {
@@ -42,14 +44,14 @@ public class CommandServer {
     }
 
     public String exists(Command command){
-        String s = memory.get(command.getKey());
+        Object s = memory.get(command.getKey());
         if(!(s == null)){
             return "key 存在";
         }
         return "key 不存在";
     }
     public String setNX(Command command){
-        String s = memory.get(command.getKey());
+        Object s = memory.get(command.getKey());
         if(!(Objects.equals(s, " ")) && !(Objects.equals(s, "null"))){
             return "key 存在";
         }
@@ -58,19 +60,27 @@ public class CommandServer {
 
     }
 
+    public Object incr(Command command){
+        return memory.incr(command.getKey());
+    }
+
+    public Object decr(Command command){
+        return memory.decr(command.getKey());
+    }
+
     public String setKey(Command command){
         memory.set(command.getKey(), command.getValue());
         return "set ok";
     }
 
-    public String getValue(Command command){
+    public Object getValue(Command command){
         return memory.get(command.getKey());
     }
-    public String stat(){
+    public Object stat(){
         StringBuilder stringBuilder = new StringBuilder();
         Set<String> keys = memory.keyList();
         for(String key:keys){
-            String value = memory.get(key);
+            Object value = memory.get(key);
             stringBuilder.append(value).append(" ");
         }
         return stringBuilder.toString();

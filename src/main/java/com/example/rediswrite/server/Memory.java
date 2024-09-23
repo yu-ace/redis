@@ -67,18 +67,21 @@ public class Memory {
         file.close();
     }
 
-    public String get(String key) {
-        String value;
+    public Object get(String key) {
+        Object value;
         if(map.containsKey(key)){
             buffer.limit(1024*1024);
             Record record = map.get(key);
             buffer.position(record.getPosition());
-            buffer.limit(record.getPosition() + record.getLength());
-            ByteBuffer slice = buffer.slice();
-            byte[] bytes = new byte[slice.remaining()];
-            slice.get(bytes);
-
-            value = new String(bytes, CharsetUtil.UTF_8);
+            if("String".equals(map.get(key).getType())){
+                buffer.limit(record.getPosition() + record.getLength());
+                ByteBuffer slice = buffer.slice();
+                byte[] bytes = new byte[slice.remaining()];
+                slice.get(bytes);
+                value = new String(bytes, CharsetUtil.UTF_8);
+            }else {
+                value = buffer.getInt();
+            }
         }else {
             value = "null";
         }
@@ -87,10 +90,13 @@ public class Memory {
 
     public void set(String key,Object value) {
         byte[] valueByte;
+        String type;
         if(value instanceof String){
             valueByte = ((String) value).getBytes(StandardCharsets.UTF_8);
+            type = "String";
         }else {
             valueByte = ByteBuffer.allocate(4).putInt((Integer) value).array();
+            type = "Integer";
         }
         int valurLength = valueByte.length;
         buffer.position(0);
@@ -112,8 +118,36 @@ public class Memory {
         buffer.position(startPosition);
         buffer.put(valueByte);
 
-        Record record = new Record(startPosition, valurLength);
+        Record record = new Record(startPosition, valurLength,type);
         map.put(key,record);
+    }
+
+    public Object incr(String key){
+        Object o = get(key);
+        if(o instanceof Integer value){
+            value++;
+            set(key,value);
+            return value;
+        }if(o instanceof String && "null".equals((String)o)){
+            set(key,1);
+            return 1;
+        }else {
+            return "value的类型不是Integer值";
+        }
+    }
+
+    public Object decr(String key){
+        Object o = get(key);
+        if(o instanceof Integer value){
+            value--;
+            set(key,value);
+            return value;
+        }if(o instanceof String && "null".equals((String)o)){
+            set(key,-1);
+            return -1;
+        }else {
+            return "value的类型不是Integer值";
+        }
     }
 
     public Set<String> keyList(){

@@ -25,7 +25,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void ProcessMessage(ChannelHandlerContext ctx,ByteBuf msg) {
-        String result = null;
+        Object result;
         //获取客户端发送过来的消息
         String message = msg.toString(CharsetUtil.UTF_8);
         String[] split = message.split("\n\t");

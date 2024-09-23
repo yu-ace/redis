@@ -10,16 +10,16 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         //发送消息到服务端
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("set a i"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("set c happy"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("set b am"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("delete d"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("set c sad"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("set d qweqw"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("get b"+"\n\t", CharsetUtil.UTF_8));
-//        ctx.writeAndFlush(Unpooled.copiedBuffer("get g"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("set a i"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("set c happy"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("set b am"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("delete d"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("set c sad"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("set d qweqw"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("get b"+"\n\t", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("get g"+"\n\t", CharsetUtil.UTF_8));
         ctx.writeAndFlush(Unpooled.copiedBuffer("set a 1"+"\n\t", CharsetUtil.UTF_8));
         ctx.writeAndFlush(Unpooled.copiedBuffer("set h 2"+"\n\t", CharsetUtil.UTF_8));
         ctx.writeAndFlush(Unpooled.copiedBuffer("get a"+"\n\t", CharsetUtil.UTF_8));
