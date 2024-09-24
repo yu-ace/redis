@@ -47,7 +47,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         ctx.writeAndFlush(Unpooled.copiedBuffer("delete h" + "\n\t",CharsetUtil.UTF_8));
         ctx.writeAndFlush(Unpooled.copiedBuffer("delete q" + "\n\t",CharsetUtil.UTF_8));
         ctx.writeAndFlush(Unpooled.copiedBuffer("delete k" + "\n\t",CharsetUtil.UTF_8));
-        ctx.writeAndFlush(Unpooled.copiedBuffer("clean" + "\n\t",CharsetUtil.UTF_8));
         ctx.writeAndFlush(Unpooled.copiedBuffer("get a" + "\n\t",CharsetUtil.UTF_8));
 
     }

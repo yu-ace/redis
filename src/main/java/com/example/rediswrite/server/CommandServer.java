@@ -6,9 +6,14 @@ import io.netty.buffer.ByteBuf;
 
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 public class CommandServer {
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private static final CommandServer commandServer = new CommandServer();
     private CommandServer(){
         initializeCommands();
@@ -119,13 +124,6 @@ public class CommandServer {
     }
 
     public void cleanTime(){
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                clean();
-            }
-        };
-        timer.scheduleAtFixedRate(timerTask,0,30*60*1000);
+        scheduler.scheduleAtFixedRate(commandServer::clean,0,30, TimeUnit.MINUTES);
     }
 }

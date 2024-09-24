@@ -9,10 +9,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
-public class App {
+public class App implements CommandLineRunner {
 
     @Value("${Netty.server.inetHost:127.0.0.1}")
     private String inetHost;
@@ -20,11 +21,12 @@ public class App {
     @Value("${Netty.server.inetPort:6666}")
     private Integer inetPort;
 
-
-    public static void main(String[] args) throws Exception {
+    @Override
+    public void run(String... args) throws Exception {
         connection();
     }
-    public static void connection() throws Exception{
+
+    public void connection() throws Exception{
         //创建两个线程组 boosGroup、workerGroup
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -49,7 +51,7 @@ public class App {
                     });//给workerGroup的EventLoop对应的管道设置处理器
             //System.out.println("java技术爱好者的服务端已经准备就绪...");
             //绑定端口号，启动服务端
-            ChannelFuture channelFuture = bootstrap.bind(6666).sync();
+            ChannelFuture channelFuture = bootstrap.bind(inetPort).sync();
             //对关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
         } finally {
@@ -57,5 +59,4 @@ public class App {
             workerGroup.shutdownGracefully();
         }
     }
-
 }
