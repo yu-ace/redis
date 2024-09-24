@@ -14,14 +14,12 @@ import io.netty.util.CharsetUtil;
 //5. 定时重建内存，移除已经删除的数据。定时配置保存到配置文件中
 public class ServerHandler extends ChannelInboundHandlerAdapter {
     private static final CommandServer commandServer = CommandServer.getInstance();
-    private static final Memory memory = Memory.getInstance();
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        memory.initMap();
-        memory.init();
+        commandServer.init();
+        commandServer.cleanTime();
         ProcessMessage(ctx,(ByteBuf) msg);
-        memory.shutDown();
-        memory.saveMap();
+        commandServer.shutDown();
     }
 
     private void ProcessMessage(ChannelHandlerContext ctx,ByteBuf msg) {

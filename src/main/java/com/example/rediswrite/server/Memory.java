@@ -105,7 +105,7 @@ public class Memory {
         return list;
     }
 
-    public void set(String key,Object value) {
+    public void set(ByteBuffer byteBuffer,Map<String, Record> map,String key,Object value) {
         byte[] valueByte;
         String type;
         if(value instanceof String){
@@ -118,11 +118,12 @@ public class Memory {
             valueByte = processList((List<?>) value);
             type = "List";
         }
-        Record record = getRecord(valueByte, type);
+        Record record = getRecord(byteBuffer,valueByte, type);
         map.put(key,record);
+        buffer = byteBuffer;
     }
 
-    private Record getRecord(byte[] valueByte, String type) {
+    private Record getRecord(ByteBuffer buffer,byte[] valueByte, String type) {
         int valurLength = valueByte.length;
         buffer.position(0);
         int size = buffer.getInt();
@@ -174,10 +175,10 @@ public class Memory {
         Object o = get(key);
         if(o instanceof Integer value){
             value++;
-            set(key,value);
+            set(buffer,map,key,value);
             return value;
         }if(o instanceof String && "null".equals((String)o)){
-            set(key,1);
+            set(buffer,map,key,1);
             return 1;
         }else {
             return "value的类型不是Integer值";
@@ -188,10 +189,10 @@ public class Memory {
         Object o = get(key);
         if(o instanceof Integer value){
             value--;
-            set(key,value);
+            set(buffer,map,key,value);
             return value;
         }if(o instanceof String && "null".equals((String)o)){
-            set(key,-1);
+            set(buffer,map,key,-1);
             return -1;
         }else {
             return "value的类型不是Integer值";

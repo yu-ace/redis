@@ -20,7 +20,6 @@ public class App {
     @Value("${Netty.server.inetPort:6666}")
     private Integer inetPort;
 
-    private static final Memory memory = Memory.getInstance();
 
     public static void main(String[] args) throws Exception {
         connection();

@@ -1,11 +1,11 @@
 package com.example.rediswrite.server;
 
 import com.example.rediswrite.model.Command;
+import com.example.rediswrite.model.Record;
+import io.netty.buffer.ByteBuf;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.nio.ByteBuffer;
+import java.util.*;
 import java.util.function.Function;
 
 public class CommandServer {
@@ -43,6 +43,16 @@ public class CommandServer {
         return result;
     }
 
+    public void init() throws Exception{
+        memory.initMap();
+        memory.init();
+    }
+
+    public void shutDown() throws Exception{
+        memory.shutDown();
+        memory.saveMap();
+    }
+
     public String exists(Command command){
         Object s = memory.get(command.getKey());
         if(!(s == null)){
@@ -55,7 +65,7 @@ public class CommandServer {
         if(!(Objects.equals(s, " ")) && !(Objects.equals(s, "null"))){
             return "key 存在";
         }
-        memory.set(command.getKey(), command.getValue());
+        memory.set(memory.buffer,memory.map,command.getKey(), command.getValue());
         return "key 添加成功";
 
     }
@@ -69,7 +79,7 @@ public class CommandServer {
     }
 
     public String setKey(Command command){
-        memory.set(command.getKey(), command.getValue());
+        memory.set(memory.buffer,memory.map,command.getKey(), command.getValue());
         return "set ok";
     }
 
@@ -97,5 +107,25 @@ public class CommandServer {
             stringBuilder.append(key).append(" ");
         }
         return stringBuilder.toString();
+    }
+
+    public void clean() {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1024 * 1024);
+        Map<String, Record> map = new HashMap<>();
+        Set<String> strings = memory.keyList();
+        for(String s:strings){
+            memory.set(byteBuffer,map,s,memory.get(s));
+        }
+    }
+
+    public void cleanTime(){
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                clean();
+            }
+        };
+        timer.scheduleAtFixedRate(timerTask,0,30*60*1000);
     }
 }
