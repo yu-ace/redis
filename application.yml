@@ -1,0 +1,5 @@
+# 配置NETTY配置参数
+ Netty:
+   server:
+      inetHost:127.0.0.1
+      inetPort:6666

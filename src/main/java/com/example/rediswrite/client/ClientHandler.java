@@ -10,12 +10,45 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         //发送消息到服务端
-        ctx.writeAndFlush(Unpooled.copiedBuffer("set a i"+"\n\t", CharsetUtil.UTF_8));
-        ctx.writeAndFlush(Unpooled.copiedBuffer("set c happy"+"\n\t", CharsetUtil.UTF_8));
-        ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
-        ctx.writeAndFlush(Unpooled.copiedBuffer("set b am"+"\n\t", CharsetUtil.UTF_8));
-        ctx.writeAndFlush(Unpooled.copiedBuffer("set c sad"+"\n\t", CharsetUtil.UTF_8));
-        ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("set a 123"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("set b happy"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("set b am"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("delete d"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("set c sad"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("set d qweqw"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get b"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get g"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("set a 1"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("set h 2"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get a"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get h"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("exists a"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("setNX a 2"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("setNX k 1"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get a"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get k"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get c"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("decr c"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("decr q"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("decr a"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get a"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("incr a"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get a"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("set r 1,'ads',32,'wsad',5"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get r"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("delete r"+"\n\t", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("get r"+"\n\t", CharsetUtil.UTF_8));
+
+        ctx.writeAndFlush(Unpooled.copiedBuffer("delete a" + "\n\t",CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("delete b" + "\n\t",CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("delete c" + "\n\t",CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("delete h" + "\n\t",CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("delete q" + "\n\t",CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("delete k" + "\n\t",CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("get a" + "\n\t",CharsetUtil.UTF_8));
+
     }
 
     @Override
